@@ -4,14 +4,22 @@ import jsonPlaceholder from "../apis/jsonPlaceholder";
 export const fetchPostsAndUsers = () => async (dispatch, getState) => {
   console.log("About to fetch posts");
   await dispatch(fetchPosts());
-  
-  const userids = _.uniq(_.map(getState().posts, 'userId'));
-  console.log(userids);
-  userids.forEach(id => dispatch(fetchUser(id)));
+
+  // const userids = _.uniq(_.map(getState().posts, "userId"));
+  // console.log(userids);
+  // userids.forEach((id) => dispatch(fetchUser(id)));
+
+  // Refactored version!
+  _.chain(getState().posts)
+    .map("userId")
+    .uniq()
+    .forEach((id) => dispatch(fetchUser(id)))
+    .value();
+
+  console.log("We fetched all the users");
 };
 
-
-// child actions // 
+// child actions //
 export const fetchPosts = () => async (dispatch) => {
   const response = await jsonPlaceholder.get("/posts");
 
